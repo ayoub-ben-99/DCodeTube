@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/core.sh"
+source "$SCRIPT_DIR/../lib/config.sh"
+source "$SCRIPT_DIR/../lib/ui.sh"
+source "$SCRIPT_DIR/../lib/download.sh"
+
+# ──────────────────────────────────────────────
+# DCodeTube -- Main orchestrator
+# ──────────────────────────────────────────────
+
+main() {
+  show_banner
+  check_dependencies
+  load_config
+
+  while true; do
+    show_banner
+    local choice
+    choice=$(main_menu)
+
+    case "$choice" in
+      video)
+        show_banner
+        local url
+        url=$(prompt_url)
+        local json
+        json=$(get_video_info "$url")
+        show_video_info "$json"
+
+        local formats_text
+        formats_text=$(parse_formats "$json")
+        if [[ -z "$formats_text" ]]; then
+          die "No formats available"
+        fi
+
+        local fmt_id
+        fmt_id=$(select_quality "$formats_text")
+        local title
+        title=$(echo "$json" | jq -r '.title // "Unknown"')
+
+        download_video "$url" "$fmt_id" "$title"
+        read -r -p "$(echo -e "${NORD8}Press Enter to go back${RESET}")"
+        ;;
+      audio)
+        show_banner
+        local url
+        url=$(prompt_url)
+        local json
+        json=$(get_video_info "$url")
+        show_video_info "$json"
+
+        local audio_fmt
+        audio_fmt=$(select_audio_format)
+        local title
+        title=$(echo "$json" | jq -r '.title // "Unknown"')
+
+        download_audio "$url" "$audio_fmt" "$title"
+        read -r -p "$(echo -e "${NORD8}Press Enter to go back${RESET}")"
+        ;;
+      subtitle)
+        show_banner
+        local url
+        url=$(prompt_url)
+        local json
+        json=$(get_video_info "$url")
+        show_video_info "$json"
+
+        local lang
+        lang=$(select_subtitle_lang "$json" "$DEFAULT_LANG")
+        local title
+        title=$(echo "$json" | jq -r '.title // "Unknown"')
+
+        download_subtitles "$url" "$lang" "$title"
+        read -r -p "$(echo -e "${NORD8}Press Enter to go back${RESET}")"
+        ;;
+      video+sub)
+        show_banner
+        local url
+        url=$(prompt_url)
+        local json
+        json=$(get_video_info "$url")
+        show_video_info "$json"
+
+        local formats_text
+        formats_text=$(parse_formats "$json")
+        if [[ -z "$formats_text" ]]; then
+          die "No formats available"
+        fi
+
+        local fmt_id
+        fmt_id=$(select_quality "$formats_text")
+        local lang
+        lang=$(select_subtitle_lang "$json" "$DEFAULT_LANG")
+        local title
+        title=$(echo "$json" | jq -r '.title // "Unknown"')
+
+        download_video_with_subtitles "$url" "$fmt_id" "$lang" "$title"
+        read -r -p "$(echo -e "${NORD8}Press Enter to go back${RESET}")"
+        ;;
+      settings)
+        show_settings_menu
+        ;;
+      history)
+        show_banner
+        show_history
+        ;;
+      exit|"")
+        echo -e "${NORD3}Goodbye  ${RESET}"
+        exit 0
+        ;;
+    esac
+  done
+}
+
+main "$@"
