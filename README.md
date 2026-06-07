@@ -1,23 +1,10 @@
-# DCodeTube
+# 󰗃 DCodeTube
 
 > YouTube TUI Toolkit — Nord Edition
 
 ![DCodeTube Logo](./ascii-art-text.png)
 
 **DCodeTube** is a Bash TUI (Terminal User Interface) tool for downloading YouTube videos, audio, and subtitles. Built with `yt-dlp`, `ffmpeg`, `jq`, and `fzf` — wrapped in a clean Nord-themed interface.
-
----
-⠀⠀⢀⣀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣄⣀⡀⠀⠀
-⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀
-⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
-⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆
-⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠈⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
-⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⢈⣹⣿⣿⣿⣿⣿⣿⣿⡇
-⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
-⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇
-⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀
-⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀
-⠀⠀⠈⠉⠙⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠋⠉⠁⠀⠀
 
 ---
 
@@ -68,10 +55,10 @@ Install using the provided installer script (recommended):
 bash bin/install.sh --user
 ```
 
-Quick install from terminal (replace <user>/<repo> with your GitHub repo):
+Quick install from terminal:
 
 ```bash
-curl -sSfL https://raw.githubusercontent.com/<user>/<repo>/main/install.sh | bash -s -- --user
+curl -sSfL https://raw.githubusercontent.com/ayoub-ben-99/DCodeTube/main/install.sh | bash -s -- --user
 ```
 
 Or install manually to your local user directories:
