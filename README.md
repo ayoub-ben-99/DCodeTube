@@ -1,5 +1,5 @@
-# 󰗃 DCodeTube
-
+# `󰗃 DCodeTube`
+ 󰗃 DCodeTube
 > YouTube TUI Toolkit — Nord Edition
 
 ![DCodeTube Logo](./ascii-art-text.png)
