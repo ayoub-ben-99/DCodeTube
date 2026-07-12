@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../lib/core.sh"
-source "$SCRIPT_DIR/../lib/config.sh"
-source "$SCRIPT_DIR/../lib/ui.sh"
-source "$SCRIPT_DIR/../lib/download.sh"
+SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"
+if [[ -z "$SCRIPT_SOURCE" ]]; then
+  echo "Unable to determine script location; run DCodeTube from a file path." >&2
+  exit 1
+fi
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd)"
+if [[ -f "$SCRIPT_DIR/../lib/core.sh" ]]; then
+  LIB_DIR="$SCRIPT_DIR/../lib"
+elif [[ -f "$SCRIPT_DIR/../lib/DCodeTube/core.sh" ]]; then
+  LIB_DIR="$SCRIPT_DIR/../lib/DCodeTube"
+else
+  echo "Unable to find DCodeTube libraries." >&2
+  exit 1
+fi
+source "$LIB_DIR/core.sh"
+source "$LIB_DIR/config.sh"
+source "$LIB_DIR/ui.sh"
+source "$LIB_DIR/download.sh"
 
 # ──────────────────────────────────────────────
 # DCodeTube -- Main orchestrator

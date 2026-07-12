@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-source "${BASH_SOURCE[0]%/*}/core.sh"
-source "${BASH_SOURCE[0]%/*}/config.sh"
+LIB_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$LIB_DIR/core.sh"
+source "$LIB_DIR/config.sh"
 
 # ── prompt_url ──
 prompt_url() {
@@ -162,7 +163,14 @@ show_history() {
     return
   fi
 
-  tail -r "$YTDL_HISTORY" | fzf "${FZF_BASE_OPTS[@]}" \
+  local history_cmd=("cat" "$YTDL_HISTORY")
+  if command -v tac >/dev/null 2>&1; then
+    history_cmd=("tac" "$YTDL_HISTORY")
+  elif tail -r "$YTDL_HISTORY" >/dev/null 2>&1; then
+    history_cmd=("tail" "-r" "$YTDL_HISTORY")
+  fi
+
+  "${history_cmd[@]}" | fzf "${FZF_BASE_OPTS[@]}" \
     --prompt=" History > " \
     --header=" Download history (newest first)" \
     --height=80% \

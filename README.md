@@ -52,7 +52,7 @@ sudo dnf install yt-dlp ffmpeg jq fzf nodejs
 Install using the provided installer script (recommended):
 
 ```bash
-bash bin/install.sh --user
+./bin/install.sh --user
 ```
 
 Quick install from terminal:
@@ -115,7 +115,7 @@ DCodeTube
 File: `~/.config/DCodeTube/config.conf`
 
 ```ini
-DOWNLOAD_DIR=$HOME/Downloads
+DOWNLOAD_DIR=$HOME/Downloads/DCodeTube
 DEFAULT_LANG=en
 DEFAULT_AUDIO_FORMAT=mp3
 ```
@@ -154,7 +154,7 @@ Edit via the Settings menu or directly in the file.
 
 ## Technical Details
 
-- **Sourcing**: All library files use `${BASH_SOURCE[0]%/*}` for dynamic, collision-free includes
+- **Sourcing**: The launcher supports both checkout paths and installed library paths under `~/.local/lib/DCodeTube`
 - **Cleanup**: `trap cleanup EXIT` removes temp directory on exit
 - **Overwrite Prevention**: Auto-incrementing `_1`, `_2` suffixes for duplicate filenames
 - **Subtitle Pipeline**: yt-dlp `--convert-subs srt` for native SRT output

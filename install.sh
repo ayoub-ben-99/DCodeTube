@@ -1,8 +1,40 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd)"
+REPO_URL="https://github.com/ayoub-ben-99/DCodeTube"
+ARCHIVE_URL="$REPO_URL/archive/refs/heads/main.tar.gz"
+TMP_ROOT=""
+
+cleanup() {
+  if [[ -n "$TMP_ROOT" ]]; then
+    rm -rf "$TMP_ROOT"
+  fi
+}
+trap cleanup EXIT
+
+is_repo_root() {
+  [[ -f "$1/bin/install.sh" && -f "$1/bin/DCodeTube" && -d "$1/lib" ]]
+}
+
+if is_repo_root "$SCRIPT_DIR"; then
+  REPO_ROOT="$SCRIPT_DIR"
+elif is_repo_root "$PWD"; then
+  REPO_ROOT="$PWD"
+else
+  TMP_ROOT="$(mktemp -d)"
+  echo "Downloading DCodeTube installer files..."
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$ARCHIVE_URL" | tar -xz -C "$TMP_ROOT"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO- "$ARCHIVE_URL" | tar -xz -C "$TMP_ROOT"
+  else
+    echo "curl or wget is required to install from a pipe." >&2
+    exit 1
+  fi
+  REPO_ROOT="$TMP_ROOT/DCodeTube-main"
+fi
 
 usage() {
   cat <<EOF
@@ -43,9 +75,9 @@ else
 fi
 
 echo "Forwarding to bin/install.sh (preferred installer)"
-if [[ -x "$REPO_ROOT/bin/install.sh" ]]; then
-  exec "$REPO_ROOT/bin/install.sh" "$@"
+if [[ -f "$REPO_ROOT/bin/install.sh" ]]; then
+  exec bash "$REPO_ROOT/bin/install.sh" "$@"
 else
-  echo "bin/install.sh not found or not executable; aborting." >&2
+  echo "bin/install.sh not found; aborting." >&2
   exit 1
 fi

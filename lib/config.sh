@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-source "${BASH_SOURCE[0]%/*}/core.sh"
+LIB_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$LIB_DIR/core.sh"
+
+expand_config_path() {
+  local path="$1"
+  case "$path" in
+    "~") printf '%s\n' "$HOME" ;;
+    "~/"*) printf '%s/%s\n' "$HOME" "${path#~/}" ;;
+    '$HOME') printf '%s\n' "$HOME" ;;
+    '$HOME/'*) printf '%s/%s\n' "$HOME" "${path#\$HOME/}" ;;
+    *) printf '%s\n' "$path" ;;
+  esac
+}
 
 # ── load_config ──
 load_config() {
@@ -11,7 +23,7 @@ load_config() {
       key="$(echo "$key" | xargs)"
       value="$(echo "$value" | xargs)"
       case "$key" in
-        DOWNLOAD_DIR) DOWNLOAD_DIR="$value" ;;
+        DOWNLOAD_DIR) DOWNLOAD_DIR="$(expand_config_path "$value")" ;;
         DEFAULT_LANG) DEFAULT_LANG="$value" ;;
         DEFAULT_AUDIO_FORMAT) DEFAULT_AUDIO_FORMAT="$value" ;;
       esac
@@ -52,6 +64,7 @@ show_settings_menu() {
     "Download path"*)
       read -r -e -p "$(echo -e "${NORD8}Download path: ${RESET}")" newdir
       if [[ -n "$newdir" ]]; then
+        newdir="$(expand_config_path "$newdir")"
         mkdir -p "$newdir" 2>/dev/null || die "Failed to create directory"
         DOWNLOAD_DIR="$newdir"
         save_config
